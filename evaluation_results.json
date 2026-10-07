@@ -1,0 +1,13 @@
+{
+    "qa_evaluation": {
+        "total_questions": 3,
+        "correct": 2,
+        "incorrect": 1,
+        "accuracy_percent": 66.67
+    },
+    "hallucination_evaluation": {
+        "total_questions": 5,
+        "correctly_rejected": 5,
+        "rejection_rate_percent": 100.0
+    }
+}

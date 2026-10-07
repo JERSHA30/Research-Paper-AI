@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Analysis Result</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    >
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            ResearchAI
+        </div>
+
+        <ul class="nav-links">
+
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+
+            <li>
+                <a href="upload.html">Upload</a>
+            </li>
+
+            <li>
+                <a href="about.html">About</a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <!-- ================= RESULT PAGE ================= -->
+
+    <section class="result-page">
+
+        <!-- HEADER -->
+
+        <div class="result-header">
+
+            <span class="result-badge">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                AI Analysis Complete
+            </span>
+
+            <h1>
+                Research Paper Analysis
+            </h1>
+
+            <p>
+                Understand your research paper through AI-generated
+                summaries, insights, technical terms and research gaps.
+            </p>
+
+        </div>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <div class="dashboard">
+
+
+            <!-- ================= SUMMARY ================= -->
+
+            <div class="card">
+
+                <div class="card-title">
+
+                    <div class="icon-box">
+                        <i class="fas fa-file-lines"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Paper Summary
+                        </h2>
+
+                        <span>
+                            Quick overview of the paper
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="summary"
+                    class="result-content"
+                >
+                    Loading summary...
+                </div>
+
+            </div>
+
+
+            <!-- ================= INSIGHTS ================= -->
+
+            <div class="card">
+
+                <div class="card-title">
+
+                    <div class="icon-box">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Key Insights
+                        </h2>
+
+                        <span>
+                            Important findings from the paper
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="insights"
+                    class="result-content"
+                >
+                    Loading insights...
+                </div>
+
+            </div>
+
+
+            <!-- ================= TERMS ================= -->
+
+            <div class="card">
+
+                <div class="card-title">
+
+                    <div class="icon-box">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Technical Terms
+                        </h2>
+
+                        <span>
+                            Complex terms explained simply
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="terms"
+                    class="result-content"
+                >
+                    Loading technical terms...
+                </div>
+
+            </div>
+
+
+            <!-- ================= RESEARCH GAP ================= -->
+
+            <div class="card">
+
+                <div class="card-title">
+
+                    <div class="icon-box">
+                        <i class="fas fa-magnifying-glass"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Research Gap
+                        </h2>
+
+                        <span>
+                            Limitations and unexplored areas
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="gaps"
+                    class="result-content"
+                >
+                    Loading research gaps...
+                </div>
+
+            </div>
+
+
+            <!-- ================= ASK AI ================= -->
+
+            <div class="card full ask-card">
+
+                <div class="card-title">
+
+                    <div class="icon-box">
+                        <i class="fas fa-robot"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Ask AI About This Paper
+                        </h2>
+
+                        <span>
+                            Ask questions and get answers from the paper
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ask-box">
+
+                    <input
+                        type="text"
+                        id="question"
+                        placeholder="Ask something about this paper..."
+                        onkeydown="if(event.key === 'Enter') askAI()"
+                    >
+
+                    <button onclick="askAI()">
+
+                        <i class="fas fa-paper-plane"></i>
+
+                        Ask AI
+
+                    </button>
+
+                </div>
+
+
+                <p class="example-question">
+
+                    <i class="fas fa-circle-info"></i>
+
+                    Example:
+                    What is the main contribution of this paper?
+
+                </p>
+
+
+                <div
+                    id="answer"
+                    class="answer-box"
+                ></div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        const API_URL = "http://127.0.0.1:5000";
+
+
+        // ==========================================
+        // LOAD PAPER ANALYSIS
+        // ==========================================
+
+        async function loadResults() {
+
+            try {
+
+                // ---------------- SUMMARY ----------------
+
+                const summaryResponse =
+                    await fetch(API_URL + "/summary");
+
+                const summaryData =
+                    await summaryResponse.json();
+
+                if (summaryData.success) {
+
+                    document.getElementById("summary").textContent =
+                        summaryData.summary;
+
+                } else {
+
+                    document.getElementById("summary").textContent =
+                        "Unable to generate summary.";
+
+                }
+
+
+                // ---------------- INSIGHTS ----------------
+
+                const insightsResponse =
+                    await fetch(API_URL + "/insights");
+
+                const insightsData =
+                    await insightsResponse.json();
+
+                if (insightsData.success) {
+
+                    document.getElementById("insights").textContent =
+                        insightsData.insights;
+
+                } else {
+
+                    document.getElementById("insights").textContent =
+                        "Unable to generate insights.";
+
+                }
+
+
+                // ---------------- TERMS ----------------
+
+                const termsResponse =
+                    await fetch(API_URL + "/terms");
+
+                const termsData =
+                    await termsResponse.json();
+
+                if (termsData.success) {
+
+                    document.getElementById("terms").innerHTML =
+    termsData.terms.map(item => `
+        <div class="term-item">
+            <strong>${item.term}</strong>
+            <p>${item.meaning}</p>
+        </div>
+    `).join("");
+
+                } else {
+
+                    document.getElementById("terms").textContent =
+                        "Unable to generate technical terms.";
+
+                }
+
+
+                // ---------------- RESEARCH GAPS ----------------
+
+                const gapsResponse =
+                    await fetch(API_URL + "/gaps");
+
+                const gapsData =
+                    await gapsResponse.json();
+
+                if (gapsData.success) {
+
+                    document.getElementById("gaps").innerHTML = `
+    <div class="gap-item">
+        <strong>Research Gap</strong>
+        <p>${gapsData.gaps.gap}</p>
+    </div>
+
+    <div class="gap-item">
+        <strong>Limitations</strong>
+        <ul>
+            ${gapsData.gaps.limitations.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+    </div>
+
+    <div class="gap-item">
+        <strong>Future Work</strong>
+        <ul>
+            ${gapsData.gaps.future_work.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+    </div>
+`;
+
+                } else {
+
+                    document.getElementById("gaps").textContent =
+                        "Unable to generate research gaps.";
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Error loading analysis:",
+                    error
+                );
+
+                document.getElementById("summary").textContent =
+                    "Unable to connect to the AI backend.";
+
+                document.getElementById("insights").textContent =
+                    "Unable to connect to the AI backend.";
+
+                document.getElementById("terms").textContent =
+                    "Unable to connect to the AI backend.";
+
+                document.getElementById("gaps").textContent =
+                    "Unable to connect to the AI backend.";
+
+            }
+
+        }
+
+
+        // ==========================================
+        // ASK AI
+        // ==========================================
+
+        async function askAI() {
+
+            const question =
+                document.getElementById("question").value.trim();
+
+            const answerBox =
+                document.getElementById("answer");
+
+
+            // Empty question
+
+            if (!question) {
+
+                answerBox.textContent =
+                    "Please enter a question.";
+
+                return;
+
+            }
+
+
+            // Loading message
+
+            answerBox.textContent =
+                "AI is thinking...";
+
+
+            try {
+
+                const response =
+                    await fetch(API_URL + "/ask", {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            question: question
+
+                        })
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                // Successful answer
+
+                if (data.success) {
+
+                    answerBox.textContent =
+                        data.answer;
+
+                }
+
+                // Backend error
+
+                else {
+
+                    answerBox.textContent =
+                        data.error ||
+                        "Unable to get answer.";
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Ask AI Error:",
+                    error
+                );
+
+                answerBox.textContent =
+                    "Unable to connect to AI backend.";
+
+            }
+
+        }
+
+
+        // ==========================================
+        // START LOADING
+        // ==========================================
+
+        loadResults();
+
+    </script>
+
+</body>
+
+</html>
+```
